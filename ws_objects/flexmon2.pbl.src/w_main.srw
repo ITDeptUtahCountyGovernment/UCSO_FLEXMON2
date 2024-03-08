@@ -432,6 +432,9 @@ end event
 event closequery;if(bMonitorEnabled = true) then
 	return 1
 end if
+
+
+
 end event
 
 type st_16 from statictext within w_main
@@ -466,7 +469,6 @@ fontfamily fontfamily = swiss!
 string facename = "Tahoma"
 string text = "Close"
 boolean originalsize = true
-alignment htextalign = Center!
 long textcolor = 16777215
 long backcolor = 255
 end type
@@ -521,7 +523,7 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "Attachment Sent:"
-alignment alignment = Right!
+alignment alignment = right!
 boolean focusrectangle = false
 end type
 
@@ -539,7 +541,7 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "Message:"
-alignment alignment = Right!
+alignment alignment = right!
 boolean focusrectangle = false
 end type
 
@@ -572,7 +574,7 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "Email From:"
-alignment alignment = Right!
+alignment alignment = right!
 boolean focusrectangle = false
 end type
 
@@ -605,7 +607,7 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "Email To:"
-alignment alignment = Right!
+alignment alignment = right!
 boolean focusrectangle = false
 end type
 
@@ -638,7 +640,7 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "Email Subject:"
-alignment alignment = Right!
+alignment alignment = right!
 boolean focusrectangle = false
 end type
 
@@ -673,7 +675,7 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "Last Threshold Email Sent:"
-alignment alignment = Right!
+alignment alignment = right!
 boolean focusrectangle = false
 end type
 
@@ -709,7 +711,6 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "email threshold"
-alignment alignment = Left!
 boolean focusrectangle = false
 end type
 
@@ -727,7 +728,6 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "hours_diff from last"
-alignment alignment = Left!
 boolean focusrectangle = false
 end type
 
@@ -745,7 +745,6 @@ string facename = "Tahoma"
 long textcolor = 16711680
 long backcolor = 67108864
 string text = "LAST Recorded d/t"
-alignment alignment = Left!
 boolean focusrectangle = false
 end type
 
