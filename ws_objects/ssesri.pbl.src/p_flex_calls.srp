@@ -1,0 +1,57 @@
+﻿$PBExportHeader$p_flex_calls.srp
+PIPELINE(source_connect=SpillmanSteveS,destination_connect=Flex,type=update,commit=100,errors=100,keyname="flex_calls")
+SOURCE(name="cdcall/gbaddr",COLUMN(type=varchar,name="compute_0001",dbtype="varchar(10)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="compute_0002",dbtype="varchar(16)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="compute_0003",dbtype="varchar(4)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="compute_0004",dbtype="varchar(4)",nulls_allowed=yes)
+ COLUMN(type=char,name="cdcall.hwrcvd",dbtype="character(2)",nulls_allowed=no)
+ COLUMN(type=decimal,name="longitude",dbtype="numeric(32,8)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="latitude",dbtype="numeric(32,8)",nulls_allowed=yes)
+ COLUMN(type=datetime,name="reptd",dbtype="timestamp",nulls_allowed=yes)
+ COLUMN(type=varchar,name="compute_0009",dbtype="varchar(61)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="compute_0010",dbtype="varchar(2)",nulls_allowed=yes))
+RETRIEVE(statement="SELECT trim(admin.cdcall.~"number~"),   
+         trim(admin.cdcall.nature),   
+         trim(admin.cdcall.~"type~"),   
+         trim(admin.cdcall.rtcity),   
+         admin.cdcall.hwrcvd,   
+         admin.gbaddr.x /1000000  as longitude,   
+         admin.gbaddr.y / 1000000 as latitude,    
+         admin.cdcall.reptd,   
+         replace(replace(trim(admin.cdcall.rtaddr), '~~', '' ), ',', ' ' ) ,  
+         trim(admin.cdcall.priort)  
+    FROM admin.cdcall,   
+         admin.gbaddr  
+   WHERE ( admin.cdcall.~"addrid~" =   admin.gbaddr.~"number~" (+) )    and
+	admin.cdcall.rtcity = 'SS' and
+	admin.cdcall.reptd >= sysdate()
+
+union
+
+SELECT trim(admin.cdcall.~"number~"),   
+         trim(admin.cdcall.nature),   
+         trim(admin.cdcall.~"type~"),   
+         trim(admin.cdcall.rtcity),   
+         admin.cdcall.hwrcvd,   
+         admin.gbaddr.x /1000000  as longitude,   
+         admin.gbaddr.y / 1000000 as latitude,    
+         admin.cdcall.reptd,   
+          replace(replace(trim(admin.cdcall.rtaddr), '~~', '' ), ',', ' ' ) ,  
+         trim(admin.cdcall.priort)  
+    FROM admin.cdcall, 
+		admin.cdhist,  
+         admin.gbaddr  
+   WHERE  (admin.cdcall.~"number~" =  admin.cdhist.callid ) and
+( admin.cdcall.~"addrid~" =   admin.gbaddr.~"number~" (+) )    and
+	(  admin.cdhist.agency = 'SSPD' or admin.cdhist.agency = 'SSFD'  )  and
+	admin.cdcall.reptd >= sysdate()")
+DESTINATION(name="flex_calls",COLUMN(type=varchar,name="callnumber",dbtype="VARCHAR2(10)",key=yes,nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=varchar,name="nature",dbtype="VARCHAR2(16)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="calltype",dbtype="VARCHAR2(4)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="city",dbtype="VARCHAR2(4)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="hwrcvd",dbtype="VARCHAR2(2)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="longitude",dbtype="NUMBER(10,7)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="latitude",dbtype="NUMBER(10,7)",nulls_allowed=yes)
+ COLUMN(type=datetime,name="reportdt",dbtype="DATE",nulls_allowed=yes)
+ COLUMN(type=varchar,name="address",dbtype="VARCHAR2(61)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="priority",dbtype="VARCHAR2(2)",nulls_allowed=yes))

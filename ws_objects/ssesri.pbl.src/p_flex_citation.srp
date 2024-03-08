@@ -1,0 +1,45 @@
+﻿$PBExportHeader$p_flex_citation.srp
+PIPELINE(source_connect=SpillmanSteveS,destination_connect=Flex,type=update,commit=100,errors=100,keyname="flex_citation")
+SOURCE(name="gbaddr/ctmain/ctoffs",COLUMN(type=varchar,name="citnumber",dbtype="varchar(10)",nulls_allowed=no)
+ COLUMN(type=varchar,name="cittype",dbtype="varchar(4)",nulls_allowed=no)
+ COLUMN(type=datetime,name="ctmain.issuedt",dbtype="timestamp",nulls_allowed=yes)
+ COLUMN(type=varchar,name="agency",dbtype="varchar(5)",nulls_allowed=no)
+ COLUMN(type=varchar,name="area",dbtype="varchar(6)",nulls_allowed=no)
+ COLUMN(type=varchar,name="court",dbtype="varchar(5)",nulls_allowed=no)
+ COLUMN(type=varchar,name="street",dbtype="varchar(61)",nulls_allowed=no)
+ COLUMN(type=decimal,name="longitude",dbtype="numeric(32,8)",nulls_allowed=no)
+ COLUMN(type=decimal,name="laditude",dbtype="numeric(32,8)",nulls_allowed=no)
+ COLUMN(type=int,name="seq",dbtype="smallint",nulls_allowed=no)
+ COLUMN(type=varchar,name="citoffense",dbtype="varchar(26)",nulls_allowed=no)
+ COLUMN(type=char,name="issuoff",dbtype="character(16)",nulls_allowed=no))
+RETRIEVE(statement="SELECT trim(admin.ctmain.~"number~") as citnumber,   
+         trim(admin.ctmain.citype) as cittype,   
+         admin.ctmain.dtissue as issuedt,   
+         trim(admin.ctmain.agency) as agency,   
+         trim(admin.ctmain.locatn) as area,   
+         trim(admin.ctmain.court) as court,   
+         replace( trim(admin.ctmain.street), ',' , ' ' ) as street,   
+         admin.gbaddr.x / 1000000 as longitude,   
+         admin.gbaddr.y  /1000000 as laditude, 
+         admin.ctoffs.seq,   
+         trim(admin.ctoffs.offcode) as citoffense,
+		 replace (admin.ctmain.issuoff, ',', ' ' ) as issuoff
+    FROM  admin.gbaddr,
+		 admin.ctmain, 
+         admin.ctoffs  
+   WHERE admin.ctoffs.~"number~" = admin.ctmain.~"number~"  and 
+ admin.ctmain.~"geoid~" = admin.gbaddr.~"number~"  (+)   and
+		admin.ctmain.agency = 'SSPD' and
+		admin.ctmain.dtissue >= sysdate()")
+DESTINATION(name="flex_citation",COLUMN(type=varchar,name="citnumber",dbtype="VARCHAR2(10)",key=yes,nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=varchar,name="cittype",dbtype="VARCHAR2(4)",nulls_allowed=yes)
+ COLUMN(type=datetime,name="issuedt",dbtype="DATE",nulls_allowed=yes)
+ COLUMN(type=varchar,name="agency",dbtype="VARCHAR2(5)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="area",dbtype="VARCHAR2(6)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="court",dbtype="VARCHAR2(5)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="street",dbtype="VARCHAR2(61)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="longitude",dbtype="NUMBER(10,7)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="laditude",dbtype="NUMBER(10,7)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="seq",dbtype="NUMBER(2,0)",key=yes,nulls_allowed=no,initial_value="0")
+ COLUMN(type=varchar,name="citoffense",dbtype="VARCHAR2(26)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=varchar,name="issuoff",dbtype="VARCHAR2(16)",nulls_allowed=yes))

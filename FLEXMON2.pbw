@@ -1,0 +1,7 @@
+Save Format v3.0(19990112)
+@begin Targets
+ 0 "flexmon2.pbt";
+@end;
+DefaultTarget "flexmon2.pbt";
+DefaultExportEncode "UTF-8";
+DefaultRemoteTarget "flexmon2.pbt";

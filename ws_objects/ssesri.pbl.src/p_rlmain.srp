@@ -1,0 +1,44 @@
+﻿$PBExportHeader$p_rlmain.srp
+PIPELINE(source_connect=SpillmanSteveS,destination_connect=Flex,type=update,commit=100,errors=100,keyname="flex_rlmain")
+SOURCE(name="rlmain",COLUMN(type=datetime,name="logdate",dbtype="timestamp",key=yes,nulls_allowed=yes)
+ COLUMN(type=decimal,name="longitude",dbtype="numeric(18,8)",nulls_allowed=no)
+ COLUMN(type=decimal,name="latitude",dbtype="numeric(18,8)",nulls_allowed=no)
+ COLUMN(type=varchar,name="unit",dbtype="varchar(21)",key=yes,nulls_allowed=no)
+ COLUMN(type=char,name="callid",dbtype="character(10)",nulls_allowed=no)
+ COLUMN(type=char,name="zone",dbtype="character(6)",key=yes,nulls_allowed=no)
+ COLUMN(type=char,name="agency",dbtype="character(5)",key=yes,nulls_allowed=no)
+ COLUMN(type=char,name="tencode",dbtype="character(6)",nulls_allowed=no)
+ COLUMN(type=char,name="descr",dbtype="character(81)",nulls_allowed=no)
+ COLUMN(type=char,name="shift",dbtype="character(16)",nulls_allowed=no)
+ COLUMN(type=int,name="seq",dbtype="tinyint",key=yes,nulls_allowed=no)
+ COLUMN(type=char,name="calltyp",dbtype="character(2)",nulls_allowed=no))
+RETRIEVE(statement="SELECT admin.rlmain.logdate,   
+         admin.rlmain.xpos /1000000 as longitude,   
+         admin.rlmain.ypos /1000000 as latitude,   
+         trim(case  admin.rlmain.unit when ''  then 'blank' else admin.rlmain.unit end) as unit,   
+         admin.rlmain.callid,   
+         admin.rlmain.zone,   
+         admin.rlmain.agency,   
+         admin.rlmain.tencode,   
+         replace (admin.rlmain.~"desc~", ',' , ' ' )  as descr,   
+         admin.rlmain.shift,   
+         admin.rlmain.seq,   
+         admin.rlmain.calltyp  
+    FROM admin.rlmain  
+   WHERE ( admin.rlmain.agency = 'SSPD' or admin.rlmain.agency = 'SSFD'  ) AND  
+         ( admin.rlmain.logdate >= sysdate()  ) and 
+		( admin.rlmain.tencode <> 'VHREG'  and  admin.rlmain.tencode <> 'NMINQ' and admin.rlmain.tencode <> 'DLINQ' and admin.rlmain.tencode <> 'VHINQ' ) and
+	 ( admin.rlmain.unit is not null or trim(admin.rlmain.unit) <> '' ) and 
+	admin.rlmain.seq > 0")
+DESTINATION(name="flex_rlmain",COLUMN(type=datetime,name="logdate",dbtype="DATE",key=yes,nulls_allowed=no,initial_value="today")
+ COLUMN(type=decimal,name="longitude",dbtype="NUMBER(10,6)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="latitude",dbtype="NUMBER(10,6)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="unit",dbtype="VARCHAR2(7)",key=yes,nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=varchar,name="callid",dbtype="VARCHAR2(10)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="zone",dbtype="VARCHAR2(6)",key=yes,nulls_allowed=yes)
+ COLUMN(type=varchar,name="agency",dbtype="VARCHAR2(5)",key=yes,nulls_allowed=yes)
+ COLUMN(type=varchar,name="tencode",dbtype="VARCHAR2(6)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="descr",dbtype="VARCHAR2(81)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="shift",dbtype="VARCHAR2(16)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="seq",dbtype="NUMBER(3,0)",key=yes,nulls_allowed=no,initial_value="0")
+ COLUMN(type=varchar,name="calltyp",dbtype="VARCHAR2(2)",nulls_allowed=yes))

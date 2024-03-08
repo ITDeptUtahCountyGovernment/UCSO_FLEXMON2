@@ -1,0 +1,49 @@
+﻿$PBExportHeader$p_flex_incident.srp
+PIPELINE(source_connect=SpillmanSteveS,destination_connect=Flex,type=create,commit=100,errors=100)
+SOURCE(name="lwmain/gbaddr/lwoffs",COLUMN(type=varchar,name="casenumber",dbtype="varchar(10)",nulls_allowed=no)
+ COLUMN(type=varchar,name="nature",dbtype="varchar(16)",nulls_allowed=no)
+ COLUMN(type=datetime,name="lwmain.dtrepor",dbtype="timestamp",nulls_allowed=yes)
+ COLUMN(type=varchar,name="area",dbtype="varchar(6)",nulls_allowed=no)
+ COLUMN(type=char,name="ADDRESS",dbtype="character(61)",nulls_allowed=no)
+ COLUMN(type=char,name="offeobs",dbtype="character(5)",nulls_allowed=no)
+ COLUMN(type=char,name="agency",dbtype="character(5)",nulls_allowed=no)
+ COLUMN(type=char,name="howrc",dbtype="character(2)",nulls_allowed=no)
+ COLUMN(type=decimal,name="longitude",dbtype="numeric(18,8)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="latitude",dbtype="numeric(18,8)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="responsibleofficer",dbtype="varchar(16)",nulls_allowed=no)
+ COLUMN(type=varchar,name="dispos",dbtype="varchar(4)",nulls_allowed=no)
+ COLUMN(type=char,name="offcode",dbtype="character(5)",nulls_allowed=no))
+RETRIEVE(statement="SELECT trim(admin.lwmain.~"number~") as  casenumber,   
+         trim(admin.lwmain.nature) as nature,   
+         admin.lwmain.dtrepor,   
+         trim(admin.lwmain.locatn) as area,   
+         replace(replace (admin.lwmain.~"address~", ',' , ' ' ), '~~', '' ) as ~"ADDRESS~",   
+         admin.lwmain.offeobs,   
+         admin.lwmain.agency,   
+         admin.lwmain.howrc,   
+         admin.gbaddr.x / 1000000  as longitude,   
+         admin.gbaddr.y / 1000000 as latitude,   
+         replace(trim(admin.lwmain.respoff), ',' , ' ' )  as responsibleofficer ,   
+         trim(admin.lwmain.dispos) as dispos,   
+         admin.lwoffs.offcode  
+    FROM admin.lwmain,   
+         admin.gbaddr,   
+         admin.lwoffs  
+   WHERE ( admin.lwmain.geoaddr = admin.gbaddr.~"number~" (+)  ) and  
+         ( admin.lwmain.~"number~" = admin.lwoffs.~"number~" )  and
+		admin.lwoffs.seq = 1 and
+		(admin.lwmain.agency = 'SSPD' or admin.lwmain.agency = 'SSPD' ) and
+		admin.lwmain.dtrepor >= sysdate()")
+DESTINATION(name="lwmain",COLUMN(type=varchar,name="casenumber",dbtype="VARCHAR2(10)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=varchar,name="nature",dbtype="VARCHAR2(16)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=datetime,name="dtrepor",dbtype="DATE",nulls_allowed=yes)
+ COLUMN(type=varchar,name="area",dbtype="VARCHAR2(6)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=char,name="ADDRESS",dbtype="CHAR(61)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=char,name="offeobs",dbtype="CHAR(5)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=char,name="agency",dbtype="CHAR(5)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=char,name="howrc",dbtype="CHAR(2)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=decimal,name="longitude",dbtype="NUMBER(18,8)",nulls_allowed=yes)
+ COLUMN(type=decimal,name="latitude",dbtype="NUMBER(18,8)",nulls_allowed=yes)
+ COLUMN(type=varchar,name="responsibleofficer",dbtype="VARCHAR2(16)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=varchar,name="dispos",dbtype="VARCHAR2(4)",nulls_allowed=no,initial_value="spaces")
+ COLUMN(type=char,name="offcode",dbtype="CHAR(5)",nulls_allowed=no,initial_value="spaces"))

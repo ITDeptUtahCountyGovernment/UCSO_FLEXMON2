@@ -1,0 +1,42 @@
+﻿$PBExportHeader$f_send_email_new.srf
+global type f_send_email_new from function_object
+end type
+
+forward prototypes
+global function long f_send_email_new (string ls_sender, string ls_recipient, string ls_subject, string ls_msg, ref transaction tr_sqlca)
+end prototypes
+
+global function long f_send_email_new (string ls_sender, string ls_recipient, string ls_subject, string ls_msg, ref transaction tr_sqlca);long ll_return
+String ls_mtype
+String ls_notify_msg
+string ls_sqlerror
+ll_return = 0
+
+//examples
+//ls_Sender = "no_reply@utahcounty.gov"
+//ls_recip = "4352785351@txt.att.net
+//ls_subj = "email"
+//ls_mesg = "this is a test"
+ls_mtype = "text/plain; charset=us-ascii"
+
+//DECLARE myproc PROCEDURE FOR WOTRACK_SEND_EMAIL(:ls_Sender, :ls_recipient, :ls_subject, :ls_msg, :ls_mtype) using tr_sqlca;
+//execute myproc;
+
+DECLARE myproc PROCEDURE FOR UTL_MAIL.send(sender => :ls_Sender, recipients => :ls_recipient, subject => :ls_subject, message => :ls_msg) using tr_sqlca;
+execute myproc;
+
+
+
+if tr_sqlca.sqlcode < 0 then
+	//log error
+	ls_sqlerror = 'Send ContactUS Email Failed! '
+	ls_sqlerror += tr_sqlca.sqlerrtext
+	//f_db_insert_wotrack_error(ls_sqlerror, "wf_send_email", ref tr_sqlca)
+	ll_return = tr_sqlca.sqldbcode
+end if	
+return ll_return
+
+
+
+end function
+
